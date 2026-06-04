@@ -8,11 +8,10 @@ from app.services.base import BaseAIService
 
 class GeminiService(BaseAIService):
     def __init__(self):
-        # Initialize the Gemini client
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel(settings.GEMINI_MODEL)
 
-    async def generate_chat_response(self, prompt: str) -> str:
+    async def generate_chat_response(self,user_id: str, prompt: str) -> str:
         try:
             response = await self.model.generate_content_async(prompt)
             return response.text

@@ -12,7 +12,7 @@ class GrokService(BaseAIService):
         )
         self.model = settings.GROK_MODEL
 
-    async def generate_chat_response(self, prompt: str) -> str:
+    async def generate_chat_response(self, user_id: str, prompt: str) -> str:
         try:
             response = await self.client.chat.completions.create(
                 model=self.model,

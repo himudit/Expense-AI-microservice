@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     # Grok Config
     GROK_API_KEY: str = ""
     GROK_MODEL: str = "grok-beta"
+
+    # Mongo Config
+    MONGO_URI: str = ""
     
     # Loads variables from the .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
