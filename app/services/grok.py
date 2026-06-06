@@ -7,6 +7,7 @@ from app.prompts.system_prompts import (
 from app.prompts.prompt_builder import (
     build_chat_messages
 )
+from app.services.chat_history_service import get_recent_messages
 
 class GrokService(BaseAIService):
     def __init__(self):
@@ -18,8 +19,10 @@ class GrokService(BaseAIService):
 
     async def generate_chat_response(self, user_id: str, prompt: str) -> str:
         try:
+            history_messages = await get_recent_messages(user_id)
             messages = build_chat_messages(
                 EXPENSEMATE_SYSTEM_PROMPT,
+                history_messages,
                 prompt
             )
             response = await self.client.chat.completions.create(
