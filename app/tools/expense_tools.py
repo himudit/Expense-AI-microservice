@@ -1,27 +1,49 @@
 from app.services.appwrite_service import appwrite_service
+from datetime import datetime
 
 async def get_total_spent_this_month(user_id: str):
-    """
-    Returns total expenses for current month.
-    """
     expenses = await appwrite_service.get_user_expenses(user_id)
-
-    # Calculate total
-
+    totalAmount = 0
+    for expense in expenses:
+        if datetime.fromisoformat(expense.createdat).month == datetime.now().month:
+            totalAmount += expense.data['ExpenseAmount']
     return {
-        "total_spent": 0
+        "total_spent": totalAmount
     }
 
 
 async def get_top_expense_categories(user_id: str):
     """
-    Returns highest spending categories.
+    Returns the highest spending category.
     """
     expenses = await appwrite_service.get_user_expenses(user_id)
 
+    categories = {}
+
+    for expense in expenses:
+        category = expense.data["Category"]
+        amount = expense.data["ExpenseAmount"]
+
+        categories[category] = (
+            categories.get(category, 0) + amount
+        )
+
+    if not categories:
+        return {
+            "top_category": None,
+            "amount": 0
+        }
+
+    top_category = max(
+        categories,
+        key=categories.get
+    )
+
     return {
-        "top_categories": []
+        "top_category": top_category,
+        "amount": categories[top_category]
     }
+
 
 
 async def get_recent_transactions(user_id: str):
@@ -29,7 +51,32 @@ async def get_recent_transactions(user_id: str):
     Returns recent transactions.
     """
     transactions = await appwrite_service.get_recent_transactions(user_id)
+    for t in transactions:
+        if not isinstance(t.createdat, str):
+            t.createdat = t.createdat.isoformat()
 
     return {
         "transactions": transactions
     }
+
+    # async def get_recent_transactions(user_id: str):
+    # """
+    # Returns recent transactions.
+    # """
+    # transactions = await appwrite_service.get_recent_transactions(user_id)
+    # serialized = []
+    # for t in transactions:
+    #     created_at = t.createdat
+    #     if not isinstance(created_at, str):
+    #         created_at = created_at.isoformat()
+
+    #     # Transform Appwrite Document into a JSON serializable dict
+    #     serialized.append({
+    #         "id": getattr(t, "$id", getattr(t, "id", None)),
+    #         "createdAt": created_at,
+    #         **getattr(t, "data", {})
+    #     })
+
+    # return {
+    #     "transactions": serialized
+    # }
