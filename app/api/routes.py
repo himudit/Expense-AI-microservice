@@ -4,7 +4,15 @@ from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.factory import ai_service
 from app.db.mongo import messages_collection
 from app.services.appwrite_service import appwrite_service
+from app.tools.expense_tools import (
+    get_total_spent_this_month,
+    get_top_expense_categories,
+    get_recent_transactions,
+)
+
+
 router = APIRouter(prefix="/api", tags=["Chat"])
+
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
@@ -28,8 +36,9 @@ async def chat_endpoint(request: ChatRequest):
 
 @router.get("/chat/{user_id}")
 async def get_chat_history(user_id: str):
-    # expenses = await appwrite_service.get_user_expenses(user_id)
-    # incomes = await appwrite_service.get_user_incomes(user_id)
+    # print( await get_total_spent_this_month(user_id))
+    # print( await get_top_expense_categories(user_id))
+    # print( await get_recent_transactions(user_id))
     messages = await messages_collection.find(
         {"user_id": user_id}
     ).sort("created_at", 1).to_list(100)
