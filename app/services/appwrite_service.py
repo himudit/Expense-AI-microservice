@@ -65,7 +65,7 @@ class AppwriteService:
         )
 
         transactions.sort(
-            key=lambda x: x["$createdAt"],
+            key=lambda x: x.createdat,
             reverse=True
         )
 
