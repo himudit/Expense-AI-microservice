@@ -1,15 +1,25 @@
 from app.services.appwrite_service import appwrite_service
 from datetime import datetime
 
-async def get_total_spent_this_month(user_id: str):
-    expenses = await appwrite_service.get_user_expenses(user_id)
-    totalAmount = 0
-    for expense in expenses:
-        if datetime.fromisoformat(expense.createdat).month == datetime.now().month:
-            totalAmount += expense.data['ExpenseAmount']
-    return {
-        "total_spent": totalAmount
-    }
+# async def get_total_spent_this_month(user_id: str):
+#     expenses = await appwrite_service.get_user_expenses(user_id)
+#     totalAmount = 0
+#     for expense in expenses:
+#         if datetime.fromisoformat(expense.createdat).month == datetime.now().month:
+#             totalAmount += expense.data["ExpenseAmount"]
+#     return {"total_spent": totalAmount}
+
+
+async def get_total_expense(
+    user_id: str, start_date: str | None = None, end_date: str | None = None
+):
+    expenses = await appwrite_service.get_user_expenses(
+        user_id=user_id, start_date=start_date, end_date=end_date
+    )
+
+    total_amount = sum(expense.data["ExpenseAmount"] for expense in expenses)
+
+    return {"total_spent": total_amount}
 
 
 async def get_top_expense_categories(user_id: str):
@@ -24,26 +34,14 @@ async def get_top_expense_categories(user_id: str):
         category = expense.data["Category"]
         amount = expense.data["ExpenseAmount"]
 
-        categories[category] = (
-            categories.get(category, 0) + amount
-        )
+        categories[category] = categories.get(category, 0) + amount
 
     if not categories:
-        return {
-            "top_category": None,
-            "amount": 0
-        }
+        return {"top_category": None, "amount": 0}
 
-    top_category = max(
-        categories,
-        key=categories.get
-    )
+    top_category = max(categories, key=categories.get)
 
-    return {
-        "top_category": top_category,
-        "amount": categories[top_category]
-    }
-
+    return {"top_category": top_category, "amount": categories[top_category]}
 
 
 async def get_recent_transactions(user_id: str):
@@ -55,9 +53,7 @@ async def get_recent_transactions(user_id: str):
         if not isinstance(t.createdat, str):
             t.createdat = t.createdat.isoformat()
 
-    return {
-        "transactions": transactions
-    }
+    return {"transactions": transactions}
 
     # async def get_recent_transactions(user_id: str):
     # """
