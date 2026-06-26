@@ -2,22 +2,6 @@ TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "get_top_expense_categories",
-            "description": "Returns spending grouped by category for the user.",
-            "parameters": {"type": "object", "properties": {}, "required": []},
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "get_recent_transactions",
-            "description": "Returns the most recent transactions of the user.",
-            "parameters": {"type": "object", "properties": {}, "required": []},
-        },
-    },
-    {
-        "type": "function",
-        "function": {
             "name": "get_total_expense",
             "description": "Returns the total expenses incurred by the user within the specified date range.",
             "parameters": {

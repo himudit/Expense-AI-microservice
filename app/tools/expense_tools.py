@@ -1,14 +1,6 @@
 from app.services.appwrite_service import appwrite_service
 from datetime import datetime
 
-# async def get_total_spent_this_month(user_id: str):
-#     expenses = await appwrite_service.get_user_expenses(user_id)
-#     totalAmount = 0
-#     for expense in expenses:
-#         if datetime.fromisoformat(expense.createdat).month == datetime.now().month:
-#             totalAmount += expense.data["ExpenseAmount"]
-#     return {"total_spent": totalAmount}
-
 
 async def get_total_expense(
     user_id: str, start_date: str | None = None, end_date: str | None = None
@@ -34,11 +26,12 @@ async def get_total_income(
     return {"total_income": total_income}
 
 
-async def get_top_expense_categories(user_id: str):
-    """
-    Returns the highest spending category.
-    """
-    expenses = await appwrite_service.get_user_expenses(user_id)
+async def get_top_expense_category(
+    user_id: str, start_date: str | None = None, end_date: str | None = None
+):
+    expenses = await appwrite_service.get_user_expenses(
+        user_id=user_id, start_date=start_date, end_date=end_date
+    )
 
     categories = {}
 
