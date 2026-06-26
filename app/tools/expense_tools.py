@@ -22,6 +22,18 @@ async def get_total_expense(
     return {"total_spent": total_amount}
 
 
+async def get_total_income(
+    user_id: str, start_date: str | None = None, end_date: str | None = None
+):
+    incomes = await appwrite_service.get_user_incomes(
+        user_id=user_id, start_date=start_date, end_date=end_date
+    )
+
+    total_income = sum(income.data["IncomeAmount"] for income in incomes)
+
+    return {"total_income": total_income}
+
+
 async def get_top_expense_categories(user_id: str):
     """
     Returns the highest spending category.

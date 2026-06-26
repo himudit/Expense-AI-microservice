@@ -1,20 +1,19 @@
 from app.tools.expense_tools import (
     get_total_expense,
+    get_total_income,
     get_top_expense_categories,
-    get_recent_transactions
+    get_recent_transactions,
 )
 
 TOOL_MAP = {
     "get_total_expense": get_total_expense,
+    "get_total_income": get_total_income,
     "get_top_expense_categories": get_top_expense_categories,
     "get_recent_transactions": get_recent_transactions,
 }
 
 
-async def execute_tool(
-    tool_name: str,
-    arguments: dict
-):
+async def execute_tool(tool_name: str, arguments: dict):
     tool = TOOL_MAP.get(tool_name)
 
     if not tool:
