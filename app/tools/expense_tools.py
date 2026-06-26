@@ -48,6 +48,27 @@ async def get_top_expense_category(
 
     return {"top_category": top_category, "amount": categories[top_category]}
 
+async def get_top_income_category(
+    user_id: str, start_date: str | None = None, end_date: str | None = None
+):
+    incomes = await appwrite_service.get_user_incomes(
+        user_id=user_id, start_date=start_date, end_date=end_date
+    )
+
+    categories = {}
+
+    for income in incomes:
+        category = income.data["Category"]
+        amount = income.data["IncomeAmount"]
+
+        categories[category] = categories.get(category, 0) + amount
+
+    if not categories:
+        return {"top_category": None, "amount": 0}
+
+    top_category = max(categories, key=categories.get)
+
+    return {"top_category": top_category, "amount": categories[top_category]}
 
 async def get_recent_transactions(user_id: str):
     """
