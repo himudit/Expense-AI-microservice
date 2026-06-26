@@ -101,7 +101,7 @@ TOOLS = [
                 "properties": {
                     "limit": {
                         "type": "integer",
-                        "description": "Number of recent transactions to return.",
+                        "description": "Number of recent transactions to return. Defaults to 10 if not specified.",
                     }
                 },
                 "required": [],
