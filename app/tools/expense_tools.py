@@ -93,3 +93,29 @@ async def get_recent_transactions(user_id: str, limit: int = 10):
         )
 
     return {"transactions": result}
+
+
+async def get_category_spending(
+    user_id: str,
+    category: str,
+    start_date: str,
+    end_date: str,
+):
+    expenses = await appwrite_service.get_user_expenses(
+        user_id=user_id,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+    total = 0
+
+    for expense in expenses:
+        if expense.data["Category"].lower() == category.lower():
+            total += expense.data["ExpenseAmount"]
+
+    return {
+        "category": category,
+        "total_spent": total,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
