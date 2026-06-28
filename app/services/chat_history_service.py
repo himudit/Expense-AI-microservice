@@ -2,10 +2,11 @@ from app.db.mongo import messages_collection
 
 async def get_recent_messages(user_id: str, limit=10):
     messages = await messages_collection.find(
-        {
-            "user_id": user_id
-        }
-    ).sort("created_at", 1).limit(limit).to_list(limit)
+        {"user_id": user_id}
+    ).sort("created_at", -1).limit(limit).to_list(limit)  # -1 = newest first
+
+    # Reverse so chronological order is preserved for the AI
+    messages.reverse()
 
     history_messages = [
         {
@@ -15,4 +16,4 @@ async def get_recent_messages(user_id: str, limit=10):
         for msg in messages
     ]
 
-    return history_messages
+    return history_messages
