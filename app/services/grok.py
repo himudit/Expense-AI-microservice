@@ -10,6 +10,8 @@ from app.tools.tool_executor import execute_tool
 from app.utils.date_parser import resolve_date_range
 from datetime import date
 from app.services.query_rewriter import query_rewriter
+import logging
+logger = logging.getLogger(__name__)
 
 
 class GrokService(BaseAIService):
@@ -89,4 +91,5 @@ class GrokService(BaseAIService):
             return response.choices[0].message.content
 
         except Exception as e:
+            logger.error(f"Grok API Error: {str(e)}", exc_info=True)  # exc_info=True prints full traceback
             raise Exception(f"Grok API Error: {str(e)}") from e
