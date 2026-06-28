@@ -9,6 +9,7 @@ from app.tools.tool_definitions import TOOLS
 from app.tools.tool_executor import execute_tool
 from app.utils.date_parser import resolve_date_range
 from datetime import date
+from app.services.query_rewriter import query_rewriter
 
 
 class GrokService(BaseAIService):
@@ -21,10 +22,20 @@ class GrokService(BaseAIService):
 
     async def generate_chat_response(self, user_id: str, prompt: str) -> str:
         try:
-            resolved_dates = resolve_date_range(prompt)
             history_messages = await get_recent_messages(user_id)
+
+            rewritten_prompt = await query_rewriter.rewrite(
+                history_messages,
+                prompt,
+            )
+
+            resolved_dates = resolve_date_range(rewritten_prompt)
+
             messages = build_chat_messages(
-                EXPENSEMATE_SYSTEM_PROMPT, history_messages, prompt, resolved_dates
+                EXPENSEMATE_SYSTEM_PROMPT,
+                history_messages,
+                rewritten_prompt,
+                resolved_dates,
             )
 
             response = await self.client.chat.completions.create(
@@ -35,12 +46,6 @@ class GrokService(BaseAIService):
                 temperature=0.2,
             )
             message = response.choices[0].message
-
-            print("User:", prompt)
-
-            for tool_call in message.tool_calls:
-                print("Tool:", tool_call.function.name)
-                print("Arguments:", tool_call.function.arguments)
 
             if message.tool_calls:
                 assistant_message = {
