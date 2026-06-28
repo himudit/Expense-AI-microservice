@@ -45,6 +45,25 @@ def resolve_date_range(user_message: str) -> dict | None:
     if "this year" in message:
         start = date(today.year, 1, 1)
         return {"start_date": start.isoformat(), "end_date": today.isoformat()}
+    
+    
+    range_match = re.search(
+        r"\bfrom\s+(january|february|march|april|may|june|july|august|september|october|november|december)"
+        r"(?:\s+(\d{4}))?\s+to\s+"
+        r"(january|february|march|april|may|june|july|august|september|october|november|december)"
+        r"(?:\s+(\d{4}))?\b",
+        message,
+    )
+
+    if range_match:
+        start_month = MONTHS[range_match.group(1)]
+        start_year  = int(range_match.group(2)) if range_match.group(2) else today.year
+        end_month   = MONTHS[range_match.group(3)]
+        end_year    = int(range_match.group(4)) if range_match.group(4) else today.year
+
+        start = date(start_year, start_month, 1)
+        end   = date(end_year, end_month, calendar.monthrange(end_year, end_month)[1])
+        return {"start_date": start.isoformat(), "end_date": end.isoformat()}
 
     match = re.search(
         r"\b(january|february|march|april|may|june|july|august|september|october|november|december)"
