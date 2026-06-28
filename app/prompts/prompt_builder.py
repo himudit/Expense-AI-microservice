@@ -16,12 +16,17 @@ def build_chat_messages(
         messages.append(
             {
                 "role": "system",
-                "content": (
-                    "Resolved date context for this request:\n"
-                    f"{resolved_dates}\n"
-                    "Use these exact dates when calling tools. "
-                    "Do not infer or modify the date range."
-                ),
+                "content": f"""
+Resolved date context.
+
+Use these dates exactly when calling tools.
+
+Start Date: {resolved_dates["start_date"]}
+End Date: {resolved_dates["end_date"]}
+
+Do not modify these dates.
+Do not infer another date range.
+    """.strip(),
             }
         )
 
