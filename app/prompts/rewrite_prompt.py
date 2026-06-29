@@ -20,6 +20,12 @@ Rules:
 - Never answer the question.
 - Never invent information.
 - If the message is already fully self-contained, return it unchanged.
+- Return only a plain English question. Never return JSON, tool calls,
+  function names, code, or any structured data format.
+- The conversation history may contain assistant messages. 
+  Ignore any assistant message that looks like a tool call, 
+  JSON, or function call format (e.g. "get_total_expense>{...}").
+  Only use natural language assistant messages for context.
 
 Return only the rewritten query. No explanation.
 """
