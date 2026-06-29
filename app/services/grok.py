@@ -8,6 +8,7 @@ from app.services.chat_history_service import get_recent_messages
 from app.tools.tool_definitions import TOOLS
 from app.tools.tool_executor import execute_tool
 from app.utils.date_parser import resolve_date_range
+from app.utils.history_cleaner import clean_history_for_rewriter
 from datetime import date
 from app.services.query_rewriter import query_rewriter
 import logging
@@ -25,9 +26,10 @@ class GrokService(BaseAIService):
     async def generate_chat_response(self, user_id: str, prompt: str) -> str:
         try:
             history_messages = await get_recent_messages(user_id)
+            clean_history = clean_history_for_rewriter(history_messages)
 
             rewritten_prompt = await query_rewriter.rewrite(
-                history_messages,
+                clean_history,
                 prompt,
             )
 
@@ -35,7 +37,7 @@ class GrokService(BaseAIService):
 
             messages = build_chat_messages(
                 EXPENSEMATE_SYSTEM_PROMPT,
-                history_messages,
+                clean_history,
                 rewritten_prompt,
                 resolved_dates,
             )
